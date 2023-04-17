@@ -6,6 +6,7 @@ import "github.com/google/go-querystring/query"
 type V5AssetServiceI interface {
 	GetInternalTransferRecords(V5GetInternalTransferRecordsParam) (*V5GetInternalTransferRecordsResponse, error)
 	GetInternalDepositRecords(V5GetInternalDepositRecordsParam) (*V5GetInternalDepositRecordsResponse, error)
+	GetCoinQueryInfo(V5GetCoinQueryInfoParam) (*V5GetCoinQueryInfoResponse, error)
 }
 
 // V5AssetService :
@@ -111,6 +112,66 @@ func (s *V5AssetService) GetInternalDepositRecords(param V5GetInternalDepositRec
 	}
 
 	if err := s.client.getV5Privately("/v5/asset/deposit/query-internal-record", queryString, &res); err != nil {
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+// V5GetCoinQueryInfoParam :
+type V5GetCoinQueryInfoParam struct {
+	Coin string `url:"coin,omitempty"` // coin
+}
+
+// V5GetCoinQueryInfoResponse :
+type V5GetCoinQueryInfoResponse struct {
+	CommonV5Response `json:",inline"`
+	Result           V5GetCoinQueryInfoRows `json:"result"`
+}
+
+// V5GetCoinQueryInfoResult :
+type V5GetCoinQueryInfoResult struct {
+	Rows V5GetCoinQueryInfoRows `json:"rows"`
+}
+
+// V5GetCoinQueryInfoRow :
+type V5GetCoinQueryInfoRow struct {
+	Name         string
+	Coin         string
+	RemainAmount string
+	Chains       V5GetCoinQueryInfoChains
+}
+
+// V5GetCoinQueryInfoChain :
+type V5GetCoinQueryInfoChain struct {
+	ChainType             string `json:"chainType"`
+	Confirmation          string `json:"confirmation"`
+	WithdrawFee           string `json:"withdrawFee"`
+	DepositMin            string `json:"depositMin"`
+	WithdrawMin           string `json:"withdrawMin"`
+	Chain                 string `json:"chain"`
+	ChainDeposit          string `json:"chainDeposit"`
+	ChainWithdraw         string `json:"chainWithdraw"`
+	MinAccuracy           string `json:"minAccuracy"`
+	WithdrawPercentageFee string `json:"withdrawPercentageFee"`
+}
+
+// V5GetCoinQueryInfoChains :
+type V5GetCoinQueryInfoChains []V5GetCoinQueryInfoChain
+
+// V5GetCoinQueryInfoRows :
+type V5GetCoinQueryInfoRows []V5GetCoinQueryInfoRow
+
+// GetCoinQueryInfo :
+func (s *V5AssetService) GetCoinQueryInfo(param V5GetCoinQueryInfoParam) (*V5GetCoinQueryInfoResponse, error) {
+	var res V5GetCoinQueryInfoResponse
+
+	queryString, err := query.Values(param)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.client.getV5Privately("/v5/asset/coin/query-info", queryString, &res); err != nil {
 		return nil, err
 	}
 
