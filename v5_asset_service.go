@@ -1,6 +1,8 @@
 package bybit
 
-import "github.com/google/go-querystring/query"
+import (
+	"github.com/google/go-querystring/query"
+)
 
 // V5AssetServiceI :
 type V5AssetServiceI interface {
@@ -126,7 +128,7 @@ type V5GetCoinQueryInfoParam struct {
 // V5GetCoinQueryInfoResponse :
 type V5GetCoinQueryInfoResponse struct {
 	CommonV5Response `json:",inline"`
-	Result           V5GetCoinQueryInfoRows `json:"result"`
+	Result           V5GetCoinQueryInfoResult `json:"result"`
 }
 
 // V5GetCoinQueryInfoResult :
@@ -136,10 +138,10 @@ type V5GetCoinQueryInfoResult struct {
 
 // V5GetCoinQueryInfoRow :
 type V5GetCoinQueryInfoRow struct {
-	Name         string
-	Coin         string
-	RemainAmount string
-	Chains       V5GetCoinQueryInfoChains
+	Name         string                   `json:"name"`
+	Coin         string                   `json:"coin"`
+	RemainAmount string                   `json:"remainAmount"`
+	Chains       V5GetCoinQueryInfoChains `json:"chains"`
 }
 
 // V5GetCoinQueryInfoChain :
